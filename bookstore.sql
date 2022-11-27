@@ -1,16 +1,16 @@
 --CREATE DATABASE Bokhandel;
 --USE Bokhandel;
 
---CREATE TABLE Författare (
+--CREATE TABLE FörfattareTbl (
 --    [ID] int NOT NULL,
---    [Förnamn] nvarchar(max) NOT NULL,
---    [Efternamn] nvarchar(max) NOT NULL,
+--    [Förnamn] nvarchar(100) NOT NULL,
+--    [Efternamn] nvarchar(100) NOT NULL,
 --    [Födelsedatum] date NOT NULL,
 --	PRIMARY KEY ([ID])
 --);
 
 --INSERT INTO 
---Författare ([ID], [Förnamn], [Efternamn], [Födelsedatum])
+--FörfattareTbl ([ID], [Förnamn], [Efternamn], [Födelsedatum])
 --VALUES 
 --(1, 'Johannes', 'Anyuru', '1979-03-23'),
 --(2, 'Viveca', 'Sten', '1959-06-18'),
@@ -18,20 +18,20 @@
 --(4, 'Fredrik', 'Backman', '1981-06-02'),
 --(5, 'Lucinda', 'Riley', '1965-02-16');
 
---CREATE TABLE Böcker (
+--CREATE TABLE BöckerTbl (
 --    [ISBN] nchar(13) NOT NULL,
---    [Titel] nvarchar(max) NOT NULL,
---    [Språk] nvarchar(max) NOT NULL,
---    [Pris] float NOT NULL,
+--    [Titel] nvarchar(100) NOT NULL,
+--    [Språk] nvarchar(100) NOT NULL,
+--    [Pris] decimal (10,2) NOT NULL,
 --	[Utgivningsdatum] date NOT NULL,
 --	[Sidor] int NOT NULL,
 --	[FörfattareID] int NOT NULL,
 --	PRIMARY KEY ([ISBN]),
---	FOREIGN KEY ([FörfattareID]) REFERENCES Författare([ID])
+--	FOREIGN KEY ([FörfattareID]) REFERENCES FörfattareTbl([ID])
 --);
 
 --INSERT INTO 
---Böcker ([ISBN], [Titel], [Språk], [Pris], [Utgivningsdatum], [Sidor], [FörfattareID])
+--BöckerTbl ([ISBN], [Titel], [Språk], [Pris], [Utgivningsdatum], [Sidor], [FörfattareID])
 --VALUES 
 --(9789113121741, 'Ixelles', 'Svenska', 219.00, '2022-09-16', 422, 1),
 --(9789174693270, 'Dikter för unga', 'Svenska', 180.00, '2021-03-10', 143, 1),
@@ -44,37 +44,64 @@
 --(9789180060547, 'Änglaträdet', 'Svenska', 216.00, '2021-10-25', 592, 5),
 --(9789189057340, 'Fjärilsrummet', 'Svenska', 218.00, '2020-04-17', 616, 5);
 
---SELECT * FROM Böcker;
-
---CREATE TABLE Butiker (
+--CREATE TABLE ButikerTbl (
 --    [ButiksID] int NOT NULL,
---    [Namn] nvarchar(max) NOT NULL,
---    [Adress] nvarchar(max) NOT NULL,
+--    [Namn] nvarchar(100) NOT NULL,
+--    [Adress] nvarchar(100) NOT NULL,
 --    [Postnummer] nchar(5) NOT NULL,
---	[Ort] nvarchar(max) NOT NULL,
+--	[Ort] nvarchar(100) NOT NULL,
 --	PRIMARY KEY ([ButiksID])
 --);
 
 --INSERT INTO 
---Butiker ([ButiksID], [Namn], [Adress], [Postnummer], [Ort])
+--ButikerTbl ([ButiksID], [Namn], [Adress], [Postnummer], [Ort])
 --VALUES 
 --(1, 'Hallmans Bokhandel', 'Kungsgatan 8', 45130, 'Uddevalla'),
 --(2, 'Akademibokhandeln', 'Älvebacken 13', 44248, 'Kungälv'),
---(3, 'Pocket Shop', 'Drottningtorget 5', 41103, 'Göteborg')
+--(3, 'Pocket Shop', 'Drottningtorget 5', 41103, 'Göteborg');
 
---SELECT * FROM Butiker;
+--CREATE TABLE LagerSaldoTbl (
+--	[ButiksID] int NOT NULL,
+--	[ISBN] nchar(13) NOT NULL,
+--	[Antal] int NOT NULL,
+--	FOREIGN KEY ([ButiksID]) REFERENCES ButikerTbl([ButiksID]),
+--	FOREIGN KEY ([ISBN]) REFERENCES BöckerTbl([ISBN]),
+--	CONSTRAINT CK_LagerSaldo PRIMARY KEY ([ButiksID], [ISBN])
+--);
 
---Tabell: ”LagerSaldo”
---I denna tabell vill vi ha 3 kolumner: ButikID som kopplas mot Butiker, ISBN som kopplas mot böcker, 
---samt Antal som säger hur många exemplar det finns av en given bok i en viss butik. Som PK vill vi ha en kompositnyckel på kolumnerna ButikID och ISBN.
+--INSERT INTO 
+--LagerSaldoTbl ([ButiksID], [ISBN], [Antal])
+--VALUES 
+--(1, 9789113121741, 132),
+--(1, 9789174693270, 16),
+--(1, 9789137158679, 456),
+--(1, 9789137151052, 45),
+--(1, 9789127161023, 2),
+--(1, 9781556595851, 786),
+--(1, 9789137155524, 76),
+--(1, 9789137158532, 345),
+--(1, 9789180060547, 0),
+--(1, 9789189057340, 567),
+--(2, 9789113121741, 24),
+--(2, 9789174693270, 3),
+--(2, 9789137158679, 432),
+--(2, 9789137151052, 89),
+--(2, 9789127161023, 28),
+--(2, 9781556595851, 146),
+--(2, 9789137155524, 43),
+--(2, 9789137158532, 78),
+--(2, 9789180060547, 2),
+--(2, 9789189057340, 478),
+--(3, 9789113121741, 98),
+--(3, 9789174693270, 12),
+--(3, 9789137158679, 265),
+--(3, 9789137151052, 110),
+--(3, 9789127161023, 7),
+--(3, 9781556595851, 624),
+--(3, 9789137155524, 55),
+--(3, 9789137158532, 423),
+--(3, 9789180060547, 1),
+--(3, 9789189057340, 698);
 
-CREATE TABLE LagerSaldo (
-	[ButiksID] int NOT NULL,
-	[ISBN] nchar(13) NOT NULL,
-	[Antal] int NOT NULL,
-	FOREIGN KEY ([ButiksID]) REFERENCES Butiker([ButiksID]),
-	FOREIGN KEY ([ISBN]) REFERENCES Böcker([ISBN]),
-	CONSTRAINT COMPOSITE_KEY_LagerSaldo PRIMARY KEY ([ButiksID], [ISBN])
-);
-
-SELECT * FROM LagerSaldo;
+--SELECT * FROM LagerSaldoTbl
+--ORDER BY Antal DESC;
