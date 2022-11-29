@@ -165,16 +165,18 @@
 --”Böcker” av den angivna författaren. 
 --”Lagervärde” – Totala värdet (pris) för författarens böcker i samtliga butiker.
 
---CREATE VIEW vTitlarPerFörfattare AS
+CREATE VIEW vTitlarPerFörfattare AS
 SELECT 
 CONCAT([Förnamn], ' ', [Efternamn]) AS Namn,
-DATEDIFF(hour, [Födelsedatum], GETDATE())/8766 AS Ålder,
-COUNT(DISTINCT BöckerTbl.Titel) AS AntalTitlar,
-SUM(LagerSaldoTbl.Antal * BöckerTbl.Pris) AS Lagervärde
-FROM FörfattareTbl
+CONCAT(DATEDIFF(hour, [Födelsedatum], GETDATE())/8766, + ' år') AS Ålder,
+CONCAT(COUNT(DISTINCT BöckerTbl.Titel), ' st') AS AntalTitlar,
+CONCAT(SUM(LagerSaldoTbl.Antal * BöckerTbl.Pris), ' kr') AS Lagervärde
+FROM 
+FörfattareTbl
 JOIN BöckerTbl ON FörfattareTbl.ID = BöckerTbl.FörfattareID
 JOIN LagerSaldoTbl ON BöckerTbl.ISBN = LagerSaldoTbl.ISBN
-GROUP BY FörfattareTbl.ID, Förnamn, Efternamn, Födelsedatum;
+GROUP BY
+FörfattareTbl.ID, Förnamn, Efternamn, Födelsedatum;
 
 --Ändra till namn på nycklarna
 --Begin, commit
