@@ -1,6 +1,7 @@
 --CREATE DATABASE Bokhandel;
 --USE Bokhandel;
 
+
 --CREATE TABLE FörfattareTbl (
 --    [ID] int NOT NULL,
 --    [Förnamn] nvarchar(100) NOT NULL,
@@ -18,6 +19,8 @@
 --(4, 'Fredrik', 'Backman', '1981-06-02'),
 --(5, 'Lucinda', 'Riley', '1965-02-16');
 
+----------------------------------------------------------------
+
 --CREATE TABLE BöckerTbl (
 --    [ISBN] nchar(13) NOT NULL,
 --    [Titel] nvarchar(100) NOT NULL,
@@ -26,6 +29,7 @@
 --	[Utgivningsdatum] date NOT NULL,
 --	[Sidor] int NOT NULL,
 --	[FörfattareID] int NOT NULL,
+--	CHECK (LEN([ISBN]) = 13),
 --	PRIMARY KEY ([ISBN]),
 --	FOREIGN KEY ([FörfattareID]) REFERENCES FörfattareTbl([ID])
 --);
@@ -44,6 +48,8 @@
 --(9789180060547, 'Änglaträdet', 'Svenska', 216.00, '2021-10-25', 592, 5),
 --(9789189057340, 'Fjärilsrummet', 'Svenska', 218.00, '2020-04-17', 616, 5);
 
+----------------------------------------------------------------
+
 --CREATE TABLE ButikerTbl (
 --    [ButiksID] int NOT NULL,
 --    [Namn] nvarchar(100) NOT NULL,
@@ -60,10 +66,13 @@
 --(2, 'Akademibokhandeln', 'Älvebacken 13', 44248, 'Kungälv'),
 --(3, 'Pocket Shop', 'Drottningtorget 5', 41103, 'Göteborg');
 
+----------------------------------------------------------------
+
 --CREATE TABLE LagerSaldoTbl (
 --	[ButiksID] int NOT NULL,
 --	[ISBN] nchar(13) NOT NULL,
 --	[Antal] int NOT NULL,
+--	CHECK (LEN([ISBN]) = 13),
 --	FOREIGN KEY ([ButiksID]) REFERENCES ButikerTbl([ButiksID]),
 --	FOREIGN KEY ([ISBN]) REFERENCES BöckerTbl([ISBN]),
 --	CONSTRAINT CK_LagerSaldo PRIMARY KEY ([ButiksID], [ISBN])
@@ -103,5 +112,70 @@
 --(3, 9789180060547, 1),
 --(3, 9789189057340, 698);
 
---SELECT * FROM LagerSaldoTbl
---ORDER BY Antal DESC;
+----------------------------------------------------------------
+
+--CREATE TABLE KunderTbl (
+--    [KundId] int NOT NULL,
+--    [Förnamn] nvarchar(100) NOT NULL,
+--    [Efternamn] nvarchar(100) NOT NULL,
+--    [Email] nvarchar(255) unique NOT NULL,
+--	[Adress] nvarchar(100) NOT NULL,
+--    [Postnummer] nchar(5) NOT NULL,
+--	[Ort] nvarchar(100) NOT NULL,
+--	CHECK (LEN([Postnummer]) = 5),
+--	PRIMARY KEY ([KundId])
+--);
+
+--INSERT INTO 
+--KunderTbl ([KundId], [Förnamn], [Efternamn], [Email], [Adress], [Postnummer], [Ort])
+--VALUES 
+--(1, 'Magnus', 'Sandberg', 'magnus.sandberg@iths.se', 'Hasselvägen 2', '44277', 'Romelanda'),
+--(2, 'Jessica', 'Fletcher', 'murder.she@wrote.com', ' 698 Candlewood Lane', '12345', 'Maine'),
+--(3, 'Phileas', 'Fogg', 'aroundtheworldin@eightydays.uk', '7 Savile Row', '36080', 'London');
+
+----------------------------------------------------------------
+
+--CREATE TABLE OrderTbl (
+--    [OrderId] int NOT NULL,
+--    [OrderDatum] date NOT NULL,
+--	[KundEmail] nvarchar(255) unique NOT NULL,
+--	[ProductId] nchar(13) NOT NULL,
+--	[Antal] int NOT NULL,
+--	[Styckpris] decimal (10,2) NOT NULL,
+--	[Totalpris] decimal (10,2) NOT NULL, --(KAN MAN TA STYCKPRIS * ANTAL HÄR?)
+--	CHECK (LEN([ProductID]) = 13),
+--	PRIMARY KEY ([OrderId]),
+--	FOREIGN KEY ([KundEmail]) REFERENCES KunderTbl([Email]),
+--	FOREIGN KEY ([ProductId]) REFERENCES BöckerTbl([ISBN])
+--);
+
+--INSERT INTO 
+--OrderTbl ([OrderId], [OrderDatum], [KundEmail], [ProductId], [Antal], [Styckpris], [Totalpris])
+--VALUES 
+--(1, '1984-08-30', 'murder.she@wrote.com', '9781556595851', 1, 354.00, 354.00),
+--(2, '2000-01-01', 'aroundtheworldin@eightydays.uk', '9789137158679', 2, 219.00, 438.00),
+--(3, '2022-03-12', 'magnus.sandberg@iths.se', '9789127161023', 27, 232.00, 6264.00);
+
+
+--SKAPA VY
+-- Vyn ska innehålla följande 4 kolumner (med en rad per författare):
+--”Namn” – Hela namnet på författaren. 
+--”Ålder” – Hur gammal författaren är. 
+--”Titlar” – Hur många olika titlar vi har i 
+--”Böcker” av den angivna författaren. 
+--”Lagervärde” – Totala värdet (pris) för författarens böcker i samtliga butiker.
+
+--CREATE VIEW vTitlarPerFörfattare AS
+SELECT 
+CONCAT([Förnamn], ' ', [Efternamn]) AS Namn,
+DATEDIFF(hour, [Födelsedatum], GETDATE())/8766 AS Ålder,
+COUNT(DISTINCT BöckerTbl.Titel) AS AntalTitlar,
+SUM(LagerSaldoTbl.Antal * BöckerTbl.Pris) AS Lagervärde
+FROM FörfattareTbl
+JOIN BöckerTbl ON FörfattareTbl.ID = BöckerTbl.FörfattareID
+JOIN LagerSaldoTbl ON BöckerTbl.ISBN = LagerSaldoTbl.ISBN
+GROUP BY FörfattareTbl.ID, Förnamn, Efternamn, Födelsedatum;
+
+--Ändra till namn på nycklarna
+--Begin, commit
+--Lägg till junction-tables (many to many)
