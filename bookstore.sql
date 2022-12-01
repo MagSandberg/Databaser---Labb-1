@@ -306,8 +306,20 @@
 
 ------------------------| SP: FlyttaBok |------------------------
 
--- Vi vill att det ska finnas en stored procedure i databasen som på ett integritetssäkert sätt flyttar exemplar av böcker från en butik till en annan. 
--- Den ska ta en parameter med ID på butik som man flyttar från, en parameter med ID på butik man flyttar till, 
--- ett ISBN, samt en valbar (optional) fjärde parameter som tar antal exemplar man vill flytta (default = 1). 
--- Vilka hänsyn behöver vi ta för dataintegritet?
+--EXEC spFlyttaBok @antal = 10, @isbn = 9789113121741, @frånButik = 1, @tillButik = 3;
+--SELECT * FROM LagerSaldoTbl
 
+--CREATE PROCEDURE spFlyttaBok
+--@antal int = 1,
+--@isbn nchar(13),
+--@frånButik int,
+--@tillButik int
+--AS
+--BEGIN TRANSACTION;
+--UPDATE LagerSaldoTbl
+--SET [Antal] = [Antal] - @antal
+--WHERE ButiksID = @frånButik AND [ISBN] = @isbn;
+--UPDATE LagerSaldoTbl
+--SET [Antal] = [Antal] + @antal
+--WHERE ButiksID = @tillButik AND [ISBN] = @isbn;
+--COMMIT;
