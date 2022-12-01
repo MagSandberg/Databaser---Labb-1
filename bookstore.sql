@@ -32,24 +32,65 @@
 --	[Utgivningsdatum] date NOT NULL,
 --	[Sidor] int NOT NULL,
 --	[FörfattareID] int NOT NULL,
+--	[FörlagsId] int NOT NULL,
 --	CHECK (LEN([ISBN]) = 13),
 --	PRIMARY KEY ([ISBN]),
---	FOREIGN KEY ([FörfattareID]) REFERENCES FörfattareTbl([ID])
+--	FOREIGN KEY ([FörfattareID]) REFERENCES FörfattareTbl([ID]),
+--	FOREIGN KEY ([FörlagsId]) REFERENCES FörlagTbl([FörlagsId])
 --);
 
 --INSERT INTO 
---BöckerTbl ([ISBN], [Titel], [Språk], [Pris], [Utgivningsdatum], [Sidor], [FörfattareID])
+--BöckerTbl ([ISBN], [Titel], [Språk], [Pris], [Utgivningsdatum], [Sidor], [FörfattareID], [FörlagsId])
 --VALUES 
---(9789113121741, 'Ixelles', 'Svenska', 219.00, '2022-09-16', 422, 1),
---(9789174693270, 'Dikter för unga', 'Svenska', 180.00, '2021-03-10', 143, 1),
---(9789137158679, 'Botgöraren', 'Svenska', 219.00, '2022-10-04', 480, 2),
---(9789137151052, 'Offermakaren', 'Svenska', 226.00, '2020-10-14', 469, 2),
---(9789127161023, 'En stund är vi vackra på jorden', 'Svenska', 232.00, '2020-04-03', 267, 3),
---(9781556595851, 'Night Sky with Exit Wounds', 'Engelska', 354.00, '2019-06-07', 106, 3),
---(9789137155524, 'Vinnarna', 'Svenska', 210.00, '2021-10-06', 750, 4),
---(9789137158532, 'Björnstad', 'Svenska', 75.00, '2020-10-08', 472, 4),
---(9789180060547, 'Änglaträdet', 'Svenska', 216.00, '2021-10-25', 592, 5),
---(9789189057340, 'Fjärilsrummet', 'Svenska', 218.00, '2020-04-17', 616, 5);
+--(9789113121741, 'Ixelles', 'Svenska', 219.00, '2022-09-16', 422, 1, 1),
+--(9789174693270, 'Dikter för unga', 'Svenska', 180.00, '2021-03-10', 143, 1, 2),
+--(9789137158679, 'Botgöraren', 'Svenska', 219.00, '2022-10-04', 480, 2, 3),
+--(9789137151052, 'Offermakaren', 'Svenska', 226.00, '2020-10-14', 469, 2, 3),
+--(9789127161023, 'En stund är vi vackra på jorden', 'Svenska', 232.00, '2020-04-03', 267, 3, 4),
+--(9781556595851, 'Night Sky with Exit Wounds', 'Engelska', 354.00, '2019-06-07', 106, 3, 5),
+--(9789137155524, 'Vinnarna', 'Svenska', 210.00, '2021-10-06', 750, 4, 3),
+--(9789137158532, 'Björnstad', 'Svenska', 75.00, '2020-10-08', 472, 4, 3),
+--(9789180060547, 'Änglaträdet', 'Svenska', 216.00, '2021-10-25', 592, 5, 6),
+--(9789189057340, 'Fjärilsrummet', 'Svenska', 218.00, '2020-04-17', 616, 5, 6);
+
+
+------------------------| TABLE: Genre |------------------------
+
+--CREATE TABLE GenreTbl (
+--	[GenreId] int NOT NULL,
+--	[Genre] nvarchar(100) NOT NULL,
+--	CONSTRAINT PK_GenreId PRIMARY KEY ([GenreId])
+--);
+
+--INSERT INTO 
+--GenreTbl ([GenreId], [Genre])
+--VALUES 
+--(1, 'Poesi'),
+--(2, 'Modern'),
+--(3, 'Skönlitteratur'),
+--(4, 'Deckare'),
+--(5, 'Kriminalroman'),
+--(6, 'Litteraturvetenskap'),
+--(7, 'Historiska romaner');
+
+
+------------------------| TABLE: Förlag |------------------------
+
+--CREATE TABLE FörlagTbl (
+--	[FörlagsId] int NOT NULL,
+--	[Förlag] nvarchar(100) NOT NULL,
+--	CONSTRAINT PK_FörlagsId PRIMARY KEY ([FörlagsId])
+--);
+
+--INSERT INTO 
+--FörlagTbl ([FörlagsId], [Förlag])
+--VALUES 
+--(1, 'Norstedts'),
+--(2, 'Ordalaget Bokförlag'),
+--(3, 'Bokförlaget Forum'),
+--(4, 'Natur Kultur Allmänlitteratur'),
+--(5, 'Vintage Publishing'),
+--(6, 'Bazar Förlag');
 
 
 ------------------------| TABLE: Butiker |------------------------
@@ -129,18 +170,19 @@
 --	[Adress] nvarchar(100) NOT NULL,
 --	[Postnummer] nchar(5) NOT NULL,
 --	[Ort] nvarchar(100) NOT NULL,
+--	[Land] nvarchar(100) NOT NULL,
 --	CHECK (LEN([Postnummer]) = 5),
 --	PRIMARY KEY ([KundId])
 --);
 
 --INSERT INTO 
---KunderTbl ([KundId], [Förnamn], [Efternamn], [Email], [Adress], [Postnummer], [Ort])
+--KunderTbl ([KundId], [Förnamn], [Efternamn], [Email], [Adress], [Postnummer], [Ort], [Land])
 --VALUES 
---(1, 'Magnus', 'Sandberg', 'magnus.sandberg@iths.se', 'Hasselvägen 2', '44277', 'Romelanda'),
---(2, 'Jessica', 'Fletcher', 'murder.she@wrote.com', '698 Candlewood Lane', '12345', 'Maine'),
---(3, 'Phileas', 'Fogg', 'aroundtheworldin@eightydays.uk', '7 Savile Row', '36080', 'London'),
---(4, 'Peter', 'Petersson', 'bokmaleng@bok.se', 'Petergatan 5', '55433', 'Grums'),
---(5, 'Jan', 'Jansson', 'thereaderof@books.com', ' Jansvägen 37', '45611', 'Karlskoga');
+--(1, 'Magnus', 'Sandberg', 'magnus.sandberg@iths.se', 'Hasselvägen 2', '44277', 'Romelanda', 'Sverige'),
+--(2, 'Jessica', 'Fletcher', 'murder.she@wrote.com', '698 Candlewood Lane', '12345', 'Maine', 'USA'),
+--(3, 'Phileas', 'Fogg', 'aroundtheworldin@eightydays.uk', '7 Savile Row', '36080', 'London', 'England'),
+--(4, 'Peter', 'Petersson', 'bokmaleng@bok.se', 'Petergatan 5', '55433', 'Grums', 'Sverige'),
+--(5, 'Jan', 'Jansson', 'thereaderof@books.com', ' Jansvägen 37', '45611', 'Karlskoga', 'Sverige');
 
 
 ------------------------| TABLE: Order |------------------------
@@ -148,26 +190,57 @@
 --CREATE TABLE OrderTbl (
 --	[OrderId] int NOT NULL,
 --	[OrderDatum] date NOT NULL,
---	[KundEmail] nvarchar(255) NOT NULL,
+--	[KundId] int NOT NULL,
 --	[ProductId] nchar(13) NOT NULL,
 --	[Antal] int NOT NULL,
 --	[Styckpris] decimal (10,2) NOT NULL,
 --	CHECK (LEN([ProductID]) = 13),
---	CONSTRAINT PK_OrderId	PRIMARY KEY ([OrderId])
+--	CONSTRAINT PK_OrderId	PRIMARY KEY ([OrderId]),
+--	FOREIGN KEY ([ProductId]) REFERENCES BöckerTbl([ISBN]),
+--	FOREIGN KEY ([KundId]) REFERENCES KunderTbl([KundId])
 --);
 
 --INSERT INTO 
---OrderTbl ([OrderId], [OrderDatum], [KundEmail], [ProductId], [Antal], [Styckpris])
+--OrderTbl ([OrderId], [OrderDatum], [KundId], [ProductId], [Antal], [Styckpris])
 --VALUES 
---(1, '1984-08-30', 'murder.she@wrote.com', '9781556595851', 1, 354.00),
---(2, '2000-01-01', 'aroundtheworldin@eightydays.uk', '9789137158679', 2, 219.00),
---(3, '2022-03-12', 'magnus.sandberg@iths.se', '9789127161023', 4, 232.00),
---(4, '2022-03-12', 'bokmaleng@bok.se', '9789137155524', 3, 210.00),
---(5, '2022-03-12', 'thereaderof@books.com', '9781556595851', 2, 354.00),
---(6, '2022-04-07', 'murder.she@wrote.com', '9781556595851', 1, 354.00),
---(7, '2022-04-26', 'aroundtheworldin@eightydays.uk', '9789137158679', 2, 219.00),
---(8, '2022-05-12', 'magnus.sandberg@iths.se', '9789127161023', 4, 232.00),
---(9, '2022-06-02', 'murder.she@wrote.com', '9781556595851', 2, 354.00);
+--(1, '1984-08-30', 2, 9781556595851, 1, 354.00),
+--(2, '2000-01-01', 3, 9789137158679, 2, 219.00),
+--(3, '2022-03-12', 1, 9789127161023, 4, 232.00),
+--(4, '2022-03-12', 4, 9789137155524, 3, 210.00),
+--(5, '2022-03-12', 5, 9781556595851, 2, 354.00),
+--(6, '2022-04-07', 2, 9781556595851, 1, 354.00),
+--(7, '2022-04-26', 3, 9789137158679, 2, 219.00),
+--(8, '2022-05-12', 1, 9789127161023, 4, 232.00),
+--(9, '2022-06-02', 2, 9781556595851, 2, 354.00);
+
+
+------------------------| JUNCTION TABLE: Bok-Genre |------------------------
+
+--CREATE TABLE BokGenreJTbl (
+--	[ProductId] nchar(13) NOT NULL,
+--	[GenreId] int NOT NULL,
+--	CHECK (LEN([ProductId]) = 13),
+--	CONSTRAINT CK_BokGenre_Junction PRIMARY KEY ([ProductId], [GenreId]),
+--	FOREIGN KEY ([ProductId]) REFERENCES BöckerTbl([ISBN]),
+--	FOREIGN KEY ([GenreId]) REFERENCES GenreTbl([GenreId])
+--);
+
+--INSERT INTO
+--BokGenreJTbl ([ProductId], [GenreId])
+--VALUES
+--(9789113121741, 2),
+--(9789113121741, 3),
+--(9789174693270, 1),
+--(9789137158679, 4),
+--(9789137158679, 5),
+--(9789137151052, 4),
+--(9789137151052, 5),
+--(9789127161023, 6),
+--(9781556595851, 2),
+--(9789137155524, 2),
+--(9789137158532, 3),
+--(9789180060547, 6),
+--(9789189057340, 1);
 
 
 ------------------------| VIEW: TitlarPerFörfattare |------------------------
@@ -213,7 +286,7 @@
 
 --CREATE VIEW vBästaKunderna AS
 --SELECT
---[KundId],
+--KunderTbl.KundId,
 --COUNT(DISTINCT [OrderTbl].OrderId) AS AntalBeställningar,
 --SUM(DISTINCT [Antal] * [Styckpris]) AS TotaltSpenderat,
 --CASE
@@ -224,8 +297,17 @@
 --END AS KundNivå
 --FROM
 --KunderTbl
---JOIN OrderTbl ON OrderTbl.KundEmail = KunderTbl.Email
---GROUP BY [KundId];
+--JOIN OrderTbl ON OrderTbl.KundId = KunderTbl.KundId
+--GROUP BY KunderTbl.KundId;
 
 --SELECT TOP 1 * FROM vBästaKunderna
 --ORDER BY TotaltSpenderat DESC;
+
+
+------------------------| SP: FlyttaBok |------------------------
+
+-- Vi vill att det ska finnas en stored procedure i databasen som på ett integritetssäkert sätt flyttar exemplar av böcker från en butik till en annan. 
+-- Den ska ta en parameter med ID på butik som man flyttar från, en parameter med ID på butik man flyttar till, 
+-- ett ISBN, samt en valbar (optional) fjärde parameter som tar antal exemplar man vill flytta (default = 1). 
+-- Vilka hänsyn behöver vi ta för dataintegritet?
+
