@@ -5,10 +5,10 @@
 ------------------------| TABLE: Författare |------------------------
 
 --CREATE TABLE FörfattareTbl (
---    [ID] int NOT NULL,
---    [Förnamn] nvarchar(100) NOT NULL,
---    [Efternamn] nvarchar(100) NOT NULL,
---    [Födelsedatum] date NOT NULL,
+--	[ID] int NOT NULL,
+--	[Förnamn] nvarchar(100) NOT NULL,
+--	[Efternamn] nvarchar(100) NOT NULL,
+--	[Födelsedatum] date NOT NULL,
 --	PRIMARY KEY ([ID])
 --);
 
@@ -25,10 +25,10 @@
 ------------------------| TABLE: Böcker |------------------------
 
 --CREATE TABLE BöckerTbl (
---    [ISBN] nchar(13) NOT NULL,
---    [Titel] nvarchar(100) NOT NULL,
---    [Språk] nvarchar(100) NOT NULL,
---    [Pris] decimal (10,2) NOT NULL,
+--	[ISBN] nchar(13) NOT NULL,
+--	[Titel] nvarchar(100) NOT NULL,
+--	[Språk] nvarchar(100) NOT NULL,
+--	[Pris] decimal (10,2) NOT NULL,
 --	[Utgivningsdatum] date NOT NULL,
 --	[Sidor] int NOT NULL,
 --	[FörfattareID] int NOT NULL,
@@ -55,10 +55,10 @@
 ------------------------| TABLE: Butiker |------------------------
 
 --CREATE TABLE ButikerTbl (
---    [ButiksID] int NOT NULL,
---    [Namn] nvarchar(100) NOT NULL,
---    [Adress] nvarchar(100) NOT NULL,
---    [Postnummer] nchar(5) NOT NULL,
+--	[ButiksID] int NOT NULL,
+--	[Namn] nvarchar(100) NOT NULL,
+--	[Adress] nvarchar(100) NOT NULL,
+--	[Postnummer] nchar(5) NOT NULL,
 --	[Ort] nvarchar(100) NOT NULL,
 --	CHECK (LEN([Postnummer]) = 5),
 --	PRIMARY KEY ([ButiksID])
@@ -122,12 +122,12 @@
 ------------------------| TABLE: Kunder |------------------------
 
 --CREATE TABLE KunderTbl (
---    [KundId] int NOT NULL,
---    [Förnamn] nvarchar(100) NOT NULL,
---    [Efternamn] nvarchar(100) NOT NULL,
---    [Email] nvarchar(255) unique NOT NULL,
+--	[KundId] int NOT NULL,
+--	[Förnamn] nvarchar(100) NOT NULL,
+--	[Efternamn] nvarchar(100) NOT NULL,
+--	[Email] nvarchar(255) unique NOT NULL,
 --	[Adress] nvarchar(100) NOT NULL,
---    [Postnummer] nchar(5) NOT NULL,
+--	[Postnummer] nchar(5) NOT NULL,
 --	[Ort] nvarchar(100) NOT NULL,
 --	CHECK (LEN([Postnummer]) = 5),
 --	PRIMARY KEY ([KundId])
@@ -146,8 +146,8 @@
 ------------------------| TABLE: Order |------------------------
 
 --CREATE TABLE OrderTbl (
---    [OrderId] int NOT NULL,
---    [OrderDatum] date NOT NULL,
+--	[OrderId] int NOT NULL,
+--	[OrderDatum] date NOT NULL,
 --	[KundEmail] nvarchar(255) NOT NULL,
 --	[ProductId] nchar(13) NOT NULL,
 --	[Antal] int NOT NULL,
@@ -205,6 +205,7 @@
 --SELECT TOP 3 * FROM vTopSeller
 --ORDER BY Beställningsvärde DESC;
 
+
 ------------------------| VIEW: TopCustomer |------------------------
 
 -- Vy för att se vilka kunder som beställer mest böcker och för högst ordervärde.
@@ -216,10 +217,10 @@
 --COUNT(DISTINCT [OrderTbl].OrderId) AS AntalBeställningar,
 --SUM(DISTINCT [Antal] * [Styckpris]) AS TotaltSpenderat,
 --CASE
---	WHEN SUM(DISTINCT [Antal] * [Styckpris]) > 200 AND SUM(DISTINCT [Antal] * [Styckpris]) < 699  THEN 'Brons'
---	WHEN SUM(DISTINCT [Antal] * [Styckpris]) > 700 AND SUM(DISTINCT [Antal] * [Styckpris]) < 999 THEN 'Silver'
+--	WHEN SUM(DISTINCT [Antal] * [Styckpris]) > 499 AND SUM(DISTINCT [Antal] * [Styckpris]) < 799  THEN 'Brons'
+--	WHEN SUM(DISTINCT [Antal] * [Styckpris]) > 799 AND SUM(DISTINCT [Antal] * [Styckpris]) < 999 THEN 'Silver'
 --	WHEN SUM(DISTINCT [Antal] * [Styckpris]) > 1000 THEN 'Guld'
---	ELSE 'Inga ordrar'
+--	ELSE '-'
 --END AS KundNivå
 --FROM
 --KunderTbl
